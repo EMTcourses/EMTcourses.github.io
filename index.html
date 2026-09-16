@@ -11,7 +11,8 @@
     --line:#E2DED5; --line-2:#EFEBE3;
     --accent:#B4531A; --accent-soft:#F4E6D8; --on-accent:#FFFFFF;
     --mark:#FFDF9E; --mark-ink:#5A3B00;
-    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"DejaVu Sans Mono",
+           "Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
     --cjk:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Noto Sans CJK SC",system-ui,sans-serif;
     color-scheme:light dark;
   }
@@ -56,16 +57,17 @@
   @media (max-width:900px){ .cols{grid-template-columns:minmax(0,1fr)} .side{order:-1} }
 
   .chips{display:flex;gap:6px;flex-wrap:wrap;padding-block:0 12px}
-  .chip{font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--surface);
+  .chip{font-family:var(--cjk);font-size:13px;color:var(--muted);background:var(--surface);
         border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
   .chip:hover{border-color:var(--accent);color:var(--ink)}
   .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
   .chip .c{opacity:.6;margin-left:4px}
-  .statline{font-family:var(--mono);font-size:12px;color:var(--faint);padding-bottom:10px}
-  .statline b{color:var(--accent)}
+  .statline{font-family:var(--cjk);font-size:15px;color:var(--muted);padding-bottom:11px}
+  .statline b{color:var(--accent);font-size:17px;font-weight:600;
+              font-variant-numeric:tabular-nums}
 
-  h2.sech{font-size:12.5px;font-weight:600;letter-spacing:.06em;color:var(--faint);
-          margin:16px 0 8px;font-family:var(--mono)}
+  h2.sech{font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--muted);
+          margin:16px 0 8px;font-family:var(--cjk)}
   h2.sech:first-child{margin-top:0}
   .topicgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:6px}
   .topic{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:7px;
@@ -173,11 +175,6 @@
         <div id="frame" class="frame"></div>
         <div class="pinfo">
           <div class="pt" id="ptitle"></div>
-          <div class="outs">
-            <span class="lbl">在 B 站打开</span>
-            <a class="play" id="outP" href="#" target="_blank" rel="noopener">分P版</a>
-            <a class="play" id="outS" href="#" target="_blank" rel="noopener">合集版</a>
-          </div>
         </div>
       </div>
 
@@ -210,8 +207,7 @@
   var qEl=document.getElementById("q"), results=document.getElementById("results"),
       browse=document.getElementById("browse"), stat=document.getElementById("stat"),
       chips=document.getElementById("chips"), frame=document.getElementById("frame"),
-      ptitle=document.getElementById("ptitle"),
-      outP=document.getElementById("outP"), outS=document.getElementById("outS");
+      ptitle=document.getElementById("ptitle");
   var gSel=null, curP=null, PAD=20, MAXG=40, MAXH=8;
   var MYKEY="atp-mytopics", MYMAX=12;
   function myLoad(){ try{ return JSON.parse(localStorage.getItem(MYKEY))||[]; }catch(e){ return []; } }
@@ -242,11 +238,6 @@
       +'&page='+p+'&t='+back(t)+'&autoplay=0&danmaku=0" allowfullscreen '
       +'referrerpolicy="no-referrer" title="'+esc(meta.t)+'"></iframe>';
     ptitle.textContent="P"+p+"  "+meta.t;
-    outP.href="https://www.bilibili.com/video/"+BV+"/?p="+p+"&t="+back(t);
-    var L=byP[p];
-    if(L && L.b2){ outS.hidden=false;
-      outS.href="https://www.bilibili.com/video/"+L.b2+"/?t="+back(t); }
-    else outS.hidden=true;
     curP=p;
     [].forEach.call(browse.querySelectorAll(".lecrow"),function(el){
       el.classList.toggle("on", +el.getAttribute("data-p")===p); });
@@ -259,8 +250,11 @@
   allBtn.onclick=function(){ gSel=null; qEl.value=""; syncChips(); render(); };
   chips.appendChild(allBtn);
   function syncChips(){
+    var searching = qEl.value.trim() !== "";
     [].forEach.call(chips.children,function(x,i){
-      x.setAttribute("aria-pressed", String(i===0 ? gSel===null : GRP[i-1].i===gSel));
+      // 正在搜索时不高亮任何筛选按钮，避免"全部视频"一直亮着
+      var on = searching ? false : (i===0 ? gSel===null : GRP[i-1].i===gSel);
+      x.setAttribute("aria-pressed", String(on));
     });
   }
 
@@ -420,7 +414,8 @@
   browse.addEventListener("click",onClick);
   var timer=null;
   qEl.addEventListener("input",function(){
-    if(qEl.value.trim() && gSel!==null){ gSel=null; syncChips(); }   // 一旦搜索就退出分组浏览
+    if(qEl.value.trim() && gSel!==null) gSel=null;   // 一旦搜索就退出分组浏览
+    syncChips();
     clearTimeout(timer); timer=setTimeout(render,90);
   });
 
@@ -434,6 +429,7 @@
   try{var sv=localStorage.getItem("atp-theme");
       if(sv) document.documentElement.setAttribute("data-theme",sv);}catch(err){}
 
+  syncChips();
   render();
   play(1,0);
 })();
