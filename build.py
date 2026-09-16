@@ -15,21 +15,20 @@
     源数据/view2.json          分组版合集的分组结构（B 站 view API 原始返回）
     源数据/bili_map.json       本地文件名 -> 分P号
     源数据/group_map.json      分P号 -> 分组序号 + 单集 bvid
-    源数据/alias_terms.json    别名映射
+    源数据/alias_terms.json    别名映射，用于把搜索展开
+    源数据/alt_hints.json      搜不到时的替代说法提示
     源数据/tagterms.json       可做自定义标签的术语
 
 输出：
     site_data.json             未编码的数据，便于查看与 diff
-    gitee-deploy/index.html    注入 base64 后的成品页面
-    index.html                 同步副本
+    gitee-deploy/index.html    注入 base64 后的成品页面（全站唯一的页面）
 """
 import base64, io, json, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "源数据")
 TRANS = os.path.normpath(os.path.join(HERE, "..", "转写稿"))
-PAGE = os.path.join(HERE, "gitee-deploy", "index.html")
-MIRROR = os.path.join(HERE, "index.html")
+PAGE = os.path.join(HERE, "gitee-deploy", "index.html")   # 全站唯一的页面
 OUT_JSON = os.path.join(HERE, "site_data.json")
 
 BV = "BV1EL4y1Y7Sa"          # 分P版合集，播放器与分P链接用
@@ -131,7 +130,6 @@ def inject(js_text):
     if n != 1:
         sys.exit(f"错误：在 {PAGE} 中找到 {n} 个 data 节点，应为 1 个")
     io.open(PAGE, "w", encoding="utf-8").write(new)
-    io.open(MIRROR, "w", encoding="utf-8").write(new)
     return len(new.encode("utf-8"))
 
 
@@ -160,7 +158,7 @@ def main():
     print(f"已写 {OUT_JSON}")
     if "--data" not in args:
         size = inject(js)
-        print(f"已注入 {PAGE} 及同级副本，页面 {size/1024:.0f} KB")
+        print(f"已注入 {PAGE}，页面 {size/1024:.0f} KB")
 
 
 if __name__ == "__main__":
