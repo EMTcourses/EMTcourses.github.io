@@ -195,7 +195,7 @@
   function biliUrl(p,t){return "https://www.bilibili.com/video/"+BV+"/?p="+p+"&t="+Math.max(0,Math.floor(t)-2);}
   function playerUrl(p,t){
     return "https://player.bilibili.com/player.html?bvid="+BV+"&page="+p
-         + "&t="+Math.max(0,Math.floor(t)-2)+"&autoplay=0&danmaku=0&high_quality=1";
+         + "&t="+Math.max(0,Math.floor(t)-2)+"&autoplay=0&danmaku=0";
   }
   function chapOf(t){var m=/^([0-9]+|[A-Z])/.exec(t);return m?m[1]:"?";}
 
