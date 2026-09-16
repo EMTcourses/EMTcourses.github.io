@@ -417,7 +417,9 @@
       var w=d.getAttribute("data-del");
       MY=MY.filter(function(x){return x!==w;}); mySave(MY); renderBrowse(); return; }
     var a=e.target.closest("[data-alt]");
-    if(a){ qEl.value=a.getAttribute("data-alt"); render(); qEl.focus();
+    if(a){ qEl.value=a.getAttribute("data-alt");
+           gSel=null; syncChips();   // 与手动输入一致：点主题词即搜索全部课程
+           render(); qEl.focus();
            window.scrollTo({top:0,behavior:"smooth"}); return; }
     var b=e.target.closest("[data-p]");
     if(b) play(+b.getAttribute("data-p"), +b.getAttribute("data-t"));
