@@ -39,12 +39,12 @@
 
   header.top{position:sticky;top:0;z-index:40;background:var(--bg);
     border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
-  .brandrow{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding-block:11px 7px}
+  .brandrow{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding-block:10px}
   .brand{font-family:var(--cjk);font-weight:600;font-size:15px;line-height:1.45}
   @media (max-width:560px){.brand{font-size:14px}}
   .brand b{color:var(--accent)}
   .sub{color:var(--muted);font-size:12.5px}
-  .searchbar{display:flex;gap:8px;padding-bottom:11px}
+  .searchbar{display:flex;gap:8px;padding-bottom:12px}
   #q{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);background:var(--surface);
      border:1px solid var(--line);border-radius:8px;padding:11px 13px;outline:none}
   #q:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
@@ -54,7 +54,7 @@
   .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:20px;
-        align-items:start;padding-block:14px 30px}
+        align-items:start;padding-block:12px 30px}
   @media (max-width:900px){ .cols{grid-template-columns:minmax(0,1fr)} .side{order:-1} }
 
   .chips{display:flex;gap:6px;flex-wrap:wrap;padding-block:0 12px}
@@ -115,7 +115,7 @@
   .hittext{font-size:14px;line-height:1.65}
   mark{background:var(--mark);color:var(--mark-ink);border-radius:2px;padding:0 1px}
 
-  .side{position:sticky;top:96px}
+  .side{position:sticky;top:74px}
   @media (max-width:900px){ .side{position:static} }
   .player{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
   .frame{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;background:#000}
@@ -157,16 +157,16 @@
       <span class="brand">B站视频《ATP-EMTP安装及使用》、《ATP-EMTP简介及应用》课程索引</span>
       <span class="sub">点击相应视频直接跳到视频那一刻</span>
     </div>
-    <div class="searchbar">
-      <input id="q" type="search" placeholder="搜讲课内容，如：潜供电流、伏秒特性、合闸电阻、MODELS" autocomplete="off" spellcheck="false">
-      <button class="btn" id="theme" type="button" title="切换主题">◐</button>
-    </div>
   </div>
 </header>
 
 <div class="wrap">
   <div class="cols">
     <main>
+      <div class="searchbar">
+        <input id="q" type="search" placeholder="搜讲课内容，如：潜供电流、伏秒特性、合闸电阻、MODELS" autocomplete="off" spellcheck="false">
+        <button class="btn" id="theme" type="button" title="切换主题">◐</button>
+      </div>
       <div class="chips" id="chips"></div>
       <div class="statline" id="stat"></div>
       <section id="results" hidden></section>
