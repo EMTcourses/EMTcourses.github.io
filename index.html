@@ -67,12 +67,12 @@
   h2.sech{font-size:12.5px;font-weight:600;letter-spacing:.06em;color:var(--faint);
           margin:16px 0 8px;font-family:var(--mono)}
   h2.sech:first-child{margin-top:0}
-  .topicgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
-  .topic{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:9px;
-         padding:10px 12px;cursor:pointer;font:inherit;color:var(--ink)}
-  .topic:hover{border-color:var(--accent)}
-  .topic .t{font-weight:600;font-size:14px}
-  .topic .w{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
+  .topicgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:6px}
+  .topic{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:7px;
+         padding:5px 8px;cursor:pointer;font:inherit;color:var(--ink);
+         font-size:13.5px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topic:hover{border-color:var(--accent);color:var(--accent)}
+  .topic:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   .lecrow{display:flex;align-items:center;gap:10px;padding:7px 0;
           border-bottom:1px solid var(--line-2);cursor:pointer}
@@ -238,6 +238,7 @@
       gSel=(gSel===g.i)?null:g.i;
       [].forEach.call(chips.children,function(x){x.setAttribute("aria-pressed","false");});
       if(gSel!==null) b.setAttribute("aria-pressed","true");
+      qEl.value="";                 // 点分组＝浏览该组，不带着上一个搜索词
       render();
     };
     chips.appendChild(b);
@@ -336,8 +337,8 @@
   function renderBrowse(){
     var h='<h2 class="sech">按主题入门</h2><div class="topicgrid">';
     TOPICS.forEach(function(t){
-      h+='<button class="topic" type="button" data-alt="'+esc(t[0])+'"><span class="t">'
-       + esc(t[0])+'</span><span class="w">'+esc(t[1])+'</span></button>';
+      h+='<button class="topic" type="button" data-alt="'+esc(t[0])+'" title="'
+       + esc(t[1])+'">'+esc(t[0])+'</button>';
     });
     h+='</div>';
     GRP.forEach(function(g){
