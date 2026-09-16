@@ -39,8 +39,9 @@
 
   header.top{position:sticky;top:0;z-index:40;background:var(--bg);
     border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
-  .brandrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding-block:11px 6px}
-  .brand{font-family:var(--mono);font-weight:600;font-size:15px}
+  .brandrow{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding-block:11px 7px}
+  .brand{font-family:var(--cjk);font-weight:600;font-size:15px;line-height:1.45}
+  @media (max-width:560px){.brand{font-size:14px}}
   .brand b{color:var(--accent)}
   .sub{color:var(--muted);font-size:12.5px}
   .searchbar{display:flex;gap:8px;padding-bottom:11px}
@@ -152,8 +153,8 @@
 <header class="top">
   <div class="wrap">
     <div class="brandrow">
-      <span class="brand">ATP<b>·</b>EMTP 课程索引</span>
-      <span class="sub">89 讲全文可检索 · 点击命中直接跳到视频那一刻</span>
+      <span class="brand">B站视频《ATP-EMTP安装及使用》、《ATP-EMTP简介及应用》课程索引</span>
+      <span class="sub">点击相应视频直接跳到视频那一刻</span>
     </div>
     <div class="searchbar">
       <input id="q" type="search" placeholder="搜讲课内容，如：潜供电流、伏秒特性、合闸电阻、MODELS" autocomplete="off" spellcheck="false">
@@ -189,9 +190,7 @@
     </aside>
   </div>
   <footer>
-    讲稿由语音识别生成（阿里百炼 qwen3-asr-flash + ATP 专业与高频术语表），
-    时间戳为句级近似。专业术语仍可能有同音错字，请以视频画面为准。<br>
-    视频源：B 站 UP主 云之阁，播放由 B 站承载。
+   视频源：B站， UP主：云之阁。
   </footer>
 </div>
 
