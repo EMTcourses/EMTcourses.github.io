@@ -137,6 +137,7 @@
   .slot li{font-size:13px;line-height:1.9}
   .slot a{color:var(--accent)}
   .slot p{margin:7px 0 0;font-size:12px;color:var(--muted)}
+  .slot .cur{font-size:11.5px;color:var(--faint)}
 
   .empty{text-align:center;color:var(--muted);padding:26px 8px;background:var(--surface);
          border:1px solid var(--line);border-radius:10px}
@@ -182,15 +183,14 @@
       <div class="slot">
         <h3>相关链接</h3>
         <ul>
-          <li><a href="https://www.bilibili.com/video/BV1EL4y1Y7Sa/" target="_blank" rel="noopener">B 站 · 分P版</a>　全 91 集在一个视频里</li>
-          <li><a href="https://www.bilibili.com/video/BV1kL41187fZ/" target="_blank" rel="noopener">B 站 · 分组版</a>　按十个专题分组</li>
+          <li><a id="lnkP" href="https://www.bilibili.com/video/BV1EL4y1Y7Sa/" target="_blank" rel="noopener">B 站 · 分P版</a>　<span id="lnkPn" class="cur">不分组</span></li>
+          <li><a id="lnkS" href="https://www.bilibili.com/video/BV1kL41187fZ/" target="_blank" rel="noopener">B 站 · 分组版</a>　<span id="lnkSn" class="cur">按专题分组</span></li>
         </ul>
-        <p>此处留作链接位或推广位，编辑 index.html 中 <code>class="slot"</code> 一段即可。</p>
       </div>
     </aside>
   </div>
   <footer>
-   视频源：B站， UP主：云之阁。
+   视频源：B站； UP主：云之阁。
   </footer>
 </div>
 
@@ -206,7 +206,9 @@
   var qEl=document.getElementById("q"), results=document.getElementById("results"),
       browse=document.getElementById("browse"), stat=document.getElementById("stat"),
       chips=document.getElementById("chips"), frame=document.getElementById("frame"),
-      ptitle=document.getElementById("ptitle");
+      ptitle=document.getElementById("ptitle"),
+      lnkP=document.getElementById("lnkP"), lnkS=document.getElementById("lnkS"),
+      lnkPn=document.getElementById("lnkPn"), lnkSn=document.getElementById("lnkSn");
   var gSel=null, curP=null, PAD=20, MAXG=40, MAXH=8;
   var MYKEY="atp-mytopics", MYMAX=12;
   function myLoad(){ try{ return JSON.parse(localStorage.getItem(MYKEY))||[]; }catch(e){ return []; } }
@@ -238,6 +240,17 @@
       +'&page='+p+'&t='+back(t)+'&autoplay=0&danmaku=0" allowfullscreen '
       +'referrerpolicy="no-referrer" title="'+esc(meta.t)+'"></iframe>';
     ptitle.textContent="P"+p+"  "+meta.t;
+    // 右下两条链接跟随当前播放位置
+    lnkP.href="https://www.bilibili.com/video/"+BV+"/?p="+p+"&t="+back(t);
+    lnkPn.textContent="→ P"+p+" 的 "+mmss(t);
+    var L=byP[p];
+    if(L && L.b2){
+      lnkS.href="https://www.bilibili.com/video/"+L.b2+"/?t="+back(t);
+      lnkSn.textContent="→ 本集的 "+mmss(t);
+    }else{
+      lnkS.href="https://www.bilibili.com/video/BV1kL41187fZ/";
+      lnkSn.textContent="（本集无独立链接）";
+    }
     curP=p;
     [].forEach.call(browse.querySelectorAll(".lecrow"),function(el){
       el.classList.toggle("on", +el.getAttribute("data-p")===p); });
@@ -310,8 +323,7 @@
     var q=qEl.value.trim();
     if(!q){
       results.hidden=true; results.innerHTML="";
-      stat.innerHTML="共 <b>"+LEC.length+"</b> 讲可检索，"
-        +LEC.reduce(function(a,b){return a+b.s.length;},0)+" 个句子";
+      stat.innerHTML="共 <b>"+LEC.length+"</b> 讲可检索"
       return;
     }
     var r=search(q,true);
@@ -375,7 +387,7 @@
   }
 
   function renderBrowse(){
-    var h='<h2 class="sech">按主题入门'+(MY.length?'　·　浅色为你搜过的词':'')+'</h2><div class="topicgrid">';
+    var h='<h2 class="sech">按主题'+(MY.length?'　·　追加您搜过的专业术语':'')+'</h2><div class="topicgrid">';
     TOPICS.forEach(function(t){
       h+='<button class="topic" type="button" data-alt="'+esc(t[0])+'" title="'
        + esc(t[1])+'">'+esc(t[0])+'</button>';
