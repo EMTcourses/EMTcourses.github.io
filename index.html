@@ -72,6 +72,13 @@
          padding:5px 8px;cursor:pointer;font:inherit;color:var(--ink);
          font-size:13.5px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .topic:hover{border-color:var(--accent);color:var(--accent)}
+  .topic.user{background:var(--accent-soft);border-color:var(--accent-soft);
+              position:relative;padding-right:20px}
+  .topic.user:hover{border-color:var(--accent)}
+  .topic .x{position:absolute;right:4px;top:50%;transform:translateY(-50%);
+            width:15px;height:15px;line-height:14px;text-align:center;border-radius:50%;
+            font-size:12px;color:var(--faint);background:transparent}
+  .topic .x:hover{background:var(--accent);color:var(--on-accent)}
   .topic:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   .lecrow{display:flex;align-items:center;gap:10px;padding:7px 0;
@@ -204,6 +211,19 @@
       ptitle=document.getElementById("ptitle"),
       outP=document.getElementById("outP"), outS=document.getElementById("outS");
   var gSel=null, curP=null, PAD=20, MAXG=40, MAXH=8;
+  var MYKEY="atp-mytopics", MYMAX=12;
+  function myLoad(){ try{ return JSON.parse(localStorage.getItem(MYKEY))||[]; }catch(e){ return []; } }
+  function mySave(a){ try{ localStorage.setItem(MYKEY, JSON.stringify(a)); }catch(e){} }
+  var MY=myLoad();
+  function isBuiltin(w){
+    for(var i=0;i<TOPICS.length;i++) if(TOPICS[i][0].toLowerCase()===w.toLowerCase()) return true;
+    return false;
+  }
+  function myAdd(w){
+    if(!w || isBuiltin(w)) return false;
+    for(var i=0;i<MY.length;i++) if(MY[i].toLowerCase()===w.toLowerCase()) return false;
+    MY.unshift(w); if(MY.length>MYMAX) MY.length=MYMAX; mySave(MY); return true;
+  }
   var byP={}; LEC.forEach(function(L){byP[L.p]=L;});
   var allByP={}; ALL.forEach(function(x){allByP[x.p]=x;});
 
@@ -230,16 +250,25 @@
     if(window.innerWidth<=900) frame.scrollIntoView({behavior:"smooth",block:"start"});
   }
 
+  var allBtn=document.createElement("button");
+  allBtn.className="chip"; allBtn.type="button"; allBtn.setAttribute("aria-pressed","true");
+  allBtn.innerHTML='全部视频<span class="c">'+LEC.length+'</span>';
+  allBtn.onclick=function(){ gSel=null; qEl.value=""; syncChips(); render(); };
+  chips.appendChild(allBtn);
+  function syncChips(){
+    [].forEach.call(chips.children,function(x,i){
+      x.setAttribute("aria-pressed", String(i===0 ? gSel===null : GRP[i-1].i===gSel));
+    });
+  }
+
   GRP.forEach(function(g){
     var b=document.createElement("button");
     b.className="chip"; b.type="button"; b.setAttribute("aria-pressed","false");
     b.innerHTML=esc(g.n)+'<span class="c">'+g.c+"</span>";
     b.onclick=function(){
       gSel=(gSel===g.i)?null:g.i;
-      [].forEach.call(chips.children,function(x){x.setAttribute("aria-pressed","false");});
-      if(gSel!==null) b.setAttribute("aria-pressed","true");
       qEl.value="";                 // 点分组＝浏览该组，不带着上一个搜索词
-      render();
+      syncChips(); render();
     };
     chips.appendChild(b);
   });
@@ -276,6 +305,7 @@
     var r=search(q,true);
     results.hidden=false;
     if(!r.total){ renderEmpty(q); return; }
+    if(myAdd(q)) renderBrowse();
     stat.innerHTML="命中 <b>"+r.total+"</b> 处，分布在 <b>"+r.groups.length+"</b> 讲"
       +(gSel!==null?("（限 "+esc(gName(gSel))+"）"):"");
     var h="";
@@ -312,9 +342,7 @@
           + '<button class="chip" type="button" id="clearg">清除分组筛选，搜索全部课程</button>'
           + '</div></div>';
         document.getElementById("clearg").onclick=function(){
-          gSel=null;
-          [].forEach.call(chips.children,function(x){x.setAttribute("aria-pressed","false");});
-          render();
+          gSel=null; syncChips(); render();
         };
         return;
       }
@@ -335,10 +363,14 @@
   }
 
   function renderBrowse(){
-    var h='<h2 class="sech">按主题入门</h2><div class="topicgrid">';
+    var h='<h2 class="sech">按主题入门'+(MY.length?'　·　浅色为你搜过的词':'')+'</h2><div class="topicgrid">';
     TOPICS.forEach(function(t){
       h+='<button class="topic" type="button" data-alt="'+esc(t[0])+'" title="'
        + esc(t[1])+'">'+esc(t[0])+'</button>';
+    });
+    MY.forEach(function(w){
+      h+='<button class="topic user" type="button" data-alt="'+esc(w)+'" title="你搜过的词">'
+       + esc(w)+'<span class="x" data-del="'+esc(w)+'" title="移除">×</span></button>';
     });
     h+='</div>';
     GRP.forEach(function(g){
@@ -356,6 +388,10 @@
   }
 
   function onClick(e){
+    var d=e.target.closest("[data-del]");
+    if(d){ e.stopPropagation();
+      var w=d.getAttribute("data-del");
+      MY=MY.filter(function(x){return x!==w;}); mySave(MY); renderBrowse(); return; }
     var a=e.target.closest("[data-alt]");
     if(a){ qEl.value=a.getAttribute("data-alt"); render(); qEl.focus();
            window.scrollTo({top:0,behavior:"smooth"}); return; }
