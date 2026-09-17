@@ -21,14 +21,14 @@
 
 输出：
     site_data.json             未编码的数据，便于查看与 diff
-    gitee-deploy/index.html    注入 base64 后的成品页面（全站唯一的页面）
+    site/index.html            注入 base64 后的成品页面（全站唯一的页面）
 """
 import base64, io, json, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "源数据")
 TRANS = os.path.normpath(os.path.join(HERE, "..", "转写稿"))
-PAGE = os.path.join(HERE, "gitee-deploy", "index.html")   # 全站唯一的页面
+PAGE = os.path.join(HERE, "site", "index.html")   # 全站唯一的页面
 OUT_JSON = os.path.join(HERE, "site_data.json")
 
 BV = "BV1EL4y1Y7Sa"          # 分P版合集，播放器与分P链接用
