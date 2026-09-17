@@ -188,7 +188,7 @@
           <li><a id="lnkP" href="https://www.bilibili.com/video/BV1EL4y1Y7Sa/" target="_blank" rel="noopener">B 站 · 分P版</a></li>
           <li><a id="lnkS" href="https://www.bilibili.com/video/BV1kL41187fZ/" target="_blank" rel="noopener">B 站 · 分组版</a></li>
         </ul>
-        <p class="pv"><span id="busuanzi_container_site_pv" style="display:none">本站累计访问 <b id="busuanzi_value_site_pv"></b> 次</span><span id="pvlocal">本地预览不计数，上线后这里显示访问量</span></p>
+        <p class="pv"><span id="busuanzi_container_site_pv" style="display:none">本站累计访问 <b id="pvshow"></b> 次<i id="busuanzi_value_site_pv" hidden></i></span><span id="pvlocal">本地预览不计数，上线后这里显示访问量</span></p>
       </div>
     </aside>
   </div>
@@ -456,6 +456,12 @@
     document.getElementById("pvlocal").hidden=true;
     var bz=document.createElement("script");
     bz.async=true; bz.src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
+    // 显示值 = 不蒜子实际次数 + PV_BASE，使第 1 次访问显示为 1000
+    var PV_BASE=999, pvRaw=document.getElementById("busuanzi_value_site_pv");
+    new MutationObserver(function(){
+      var n=parseInt(pvRaw.textContent,10);
+      if(!isNaN(n)) document.getElementById("pvshow").textContent=n+PV_BASE;
+    }).observe(pvRaw,{childList:true,characterData:true,subtree:true});
     document.head.appendChild(bz);
   }
 
