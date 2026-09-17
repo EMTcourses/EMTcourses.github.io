@@ -4,13 +4,15 @@
 只负责「数据」这一层：页面的 HTML/CSS/JS 你可以随便改，本脚本不碰，
 它只替换 <script type="text/plain" id="data"> 节点里的那一行 base64。
 
-用法：
-    python build.py            # 重建 site_data.json 并注入 index.html
-    python build.py --check    # 只重建并与现有对比，不写任何文件
-    python build.py --data     # 只重建 site_data.json，不注入页面
+用法（在「课程检索网站」目录下）：
+    python site/build.py            # 重建数据并注入 site/index.html
+    python site/build.py --check    # 只重建并与页面里现有数据对比，不写任何文件
+    python site/build.py --data     # 另存未编码的 site_data.json 供查看，不动页面
 
-输入（全部在本目录，无需联网）：
-    ../转写稿/*_转写稿.md      讲稿与句级时间戳
+路径以本脚本所在的 site/ 的上一级（课程检索网站/）为根。
+
+输入（全在本机，无需联网）：
+    ../转写稿/*_转写稿.md      讲稿与句级时间戳（相对课程检索网站/）
     源数据/bili.json           分P版合集的 91 集目录（B 站 pagelist API 原始返回）
     源数据/view2.json          分组版合集的分组结构（B 站 view API 原始返回）
     源数据/bili_map.json       本地文件名 -> 分P号
@@ -20,22 +22,23 @@
     源数据/tagterms.json       可做自定义标签的术语
 
 输出：
-    site_data.json             未编码的数据，便于查看与 diff
     site/index.html            注入 base64 后的成品页面（全站唯一的页面）
+    site_data.json             仅 --data 时生成，查看完可删
 """
 import base64, io, json, os, re, sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "源数据")
-TRANS = os.path.normpath(os.path.join(HERE, "..", "转写稿"))
-PAGE = os.path.join(HERE, "site", "index.html")   # 全站唯一的页面
-OUT_JSON = os.path.join(HERE, "site_data.json")
+HERE = os.path.dirname(os.path.abspath(__file__))       # .../课程检索网站/site
+ROOT = os.path.dirname(HERE)                             # .../课程检索网站
+SRC = os.path.join(ROOT, "源数据")
+TRANS = os.path.normpath(os.path.join(ROOT, "..", "转写稿"))
+PAGE = os.path.join(HERE, "index.html")                  # 全站唯一的页面
+OUT_JSON = os.path.join(ROOT, "site_data.json")
 
 BV = "BV1EL4y1Y7Sa"          # 分P版合集，播放器与分P链接用
 BV_SEASON = "BV1kL41187fZ"   # 分组版合集，单集链接用
 UP = "云之阁"
 
-# 首页「按主题入门」的按钮。想增删直接改这里，格式 [显示词, 悬停提示]
+# 首页「按主题」的按钮。想增删直接改这里，格式 [显示词, 悬停提示]（显示词即搜索词）
 TOPICS = [
     ["变压器", "六、变压器"], ["电缆", "四、电缆"],
     ["MODELS", "二、基本操作 / 十、高级应用"], ["TACS", "二、基本操作"],
@@ -138,12 +141,21 @@ def build():
     return data, missing
 
 
+DATA_RE = re.compile(r'(<script type="text/plain" id="data">)(.*?)(</script>)', re.S)
+
+
+def page_data():
+    """读出页面里现有的数据（解码后的 JSON 文本）。"""
+    html = io.open(PAGE, encoding="utf-8").read()
+    m = DATA_RE.search(html)
+    return base64.b64decode(m.group(2).strip()).decode("utf-8") if m else ""
+
+
 def inject(js_text):
     """把 base64 数据写进页面的 data 节点，页面其余部分原样保留。"""
     html = io.open(PAGE, encoding="utf-8").read()
     b64 = base64.b64encode(js_text.encode("utf-8")).decode("ascii")
-    new, n = re.subn(r'(<script type="text/plain" id="data">).*?(</script>)',
-                     lambda m: m.group(1) + b64 + m.group(2), html, flags=re.S)
+    new, n = DATA_RE.subn(lambda m: m.group(1) + b64 + m.group(3), html)
     if n != 1:
         sys.exit(f"错误：在 {PAGE} 中找到 {n} 个 data 节点，应为 1 个")
     io.open(PAGE, "w", encoding="utf-8").write(new)
@@ -167,15 +179,16 @@ def main():
         print(f"  ! 有讲稿但不在 bili_map 中：{m}")
 
     if "--check" in args:
-        old = io.open(OUT_JSON, encoding="utf-8").read() if os.path.exists(OUT_JSON) else ""
-        print("与现有 site_data.json " + ("一致" if old == js else "不一致"))
+        print("与页面里现有数据 " + ("一致" if page_data() == js else "不一致"))
         return
 
-    io.open(OUT_JSON, "w", encoding="utf-8").write(js)
-    print(f"已写 {OUT_JSON}")
-    if "--data" not in args:
-        size = inject(js)
-        print(f"已注入 {PAGE}，页面 {size/1024:.0f} KB")
+    if "--data" in args:
+        io.open(OUT_JSON, "w", encoding="utf-8").write(js)
+        print(f"已写 {OUT_JSON}（仅供查看，不参与发布）")
+        return
+
+    size = inject(js)
+    print(f"已注入 {PAGE}，页面 {size/1024:.0f} KB")
 
 
 if __name__ == "__main__":
