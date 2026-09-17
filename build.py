@@ -48,6 +48,23 @@ TOPICS = [
     ["频率扫描", "十、高级应用"], ["波阻抗", "三、架空输电线路"],
 ]
 
+# 首页「按模型」按钮：[按钮文字, 悬停提示, 实际搜索词]
+# 搜索词取语料里真实出现的写法（讲师多说「JMarti」而不带「模型」），命中数见建站说明
+MODEL_TOPICS = [
+    ["JMarti模型", "三、架空输电线路 / 四、电缆", "JMarti"],
+    ["贝杰龙模型", "Bergeron 模型，多个分组", "贝杰龙"],
+    ["PI模型", "π 模型，多个分组", "PI模型"],
+    ["LCC", "线路 / 电缆参数计算", "LCC"],
+    ["BCTRAN模型", "六、变压器", "BCTRAN"],
+    ["XFMR模型", "六、变压器", "XFMR"],
+    ["SAT饱和模型", "六、变压器", "SAT饱和模型"],
+    ["Kizilcay模型", "RLC 集中参数等值，多个分组", "Kizilcay模型"],
+    ["Heidler模型", "雷电流波形，九、雷电过电压", "Heidler"],
+    ["电弧模型", "TACS / MODELS 电弧", "电弧"],
+    ["统计开关", "八、操作过电压", "统计开关"],
+    ["先导法", "绝缘子闪络判据，九、雷电过电压", "先导法"],
+]
+
 SEG = re.compile(r"^\[(\d\d):(\d\d):(\d\d(?:\.\d+)?)\]\s*(.+)$")
 
 
@@ -111,7 +128,7 @@ def build():
 
     data = {
         "bv": BV, "up": UP, "n": len(lec),
-        "lec": lec, "topics": TOPICS, "alt": alt,
+        "lec": lec, "topics": TOPICS, "models": MODEL_TOPICS, "alt": alt,
         "groups": groups,
         "all": [{"p": x["page"], "t": x["part"], "d": x["duration"]} for x in pages],
         "season": rj("view2.json")["data"]["ugc_season"]["title"],
