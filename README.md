@@ -3,7 +3,7 @@
 89 讲 ATP-EMTP 电磁暂态仿真课程的**讲稿全文检索**，命中后在页面内直接播放
 B 站对应分P的对应时刻。
 
-**在线使用：<https://yungeli-1113.github.io/atp-course/>**（无需登录）
+**在线使用：<https://emtcourses.github.io/>**（无需登录）
 
 ## 怎么用
 
