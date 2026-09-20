@@ -5,31 +5,31 @@
 它只替换 <script type="text/plain" id="data"> 节点里的那一行 base64。
 
 用法（在「课程检索网站」目录下）：
-    python site/build.py            # 重建数据并注入 site/index.html
-    python site/build.py --check    # 只重建并与页面里现有数据对比，不写任何文件
-    python site/build.py --data     # 另存未编码的 site_data.json 供查看，不动页面
+    python 网站网页/build.py            # 重建数据并注入 网站网页/index.html
+    python 网站网页/build.py --check    # 只重建并与页面里现有数据对比，不写任何文件
+    python 网站网页/build.py --data     # 另存未编码的 site_data.json 供查看，不动页面
 
-路径以本脚本所在的 site/ 的上一级（课程检索网站/）为根。
+路径以本脚本所在的“网站网页/”的上一级（课程检索网站/）为根。
 
 输入（全在本机，无需联网）：
     ../转写稿/*_转写稿.md      讲稿与句级时间戳（相对课程检索网站/）
-    源数据/bili.json           分P版合集的 91 集目录（B 站 pagelist API 原始返回）
-    源数据/view2.json          分组版合集的分组结构（B 站 view API 原始返回）
-    源数据/bili_map.json       本地文件名 -> 分P号
-    源数据/group_map.json      分P号 -> 分组序号 + 单集 bvid
-    源数据/alias_terms.json    别名映射，用于把搜索展开
-    源数据/alt_hints.json      搜不到时的替代说法提示
-    源数据/tagterms.json       可做自定义标签的术语
+    本地网页/源数据/bili.json           分P版合集的 91 集目录（B 站 pagelist API 原始返回）
+    本地网页/源数据/view2.json          分组版合集的分组结构（B 站 view API 原始返回）
+    本地网页/源数据/bili_map.json       本地文件名 -> 分P号
+    本地网页/源数据/group_map.json      分P号 -> 分组序号 + 单集 bvid
+    本地网页/源数据/alias_terms.json    别名映射，用于把搜索展开
+    本地网页/源数据/alt_hints.json      搜不到时的替代说法提示
+    本地网页/源数据/tagterms.json       可做自定义标签的术语
 
 输出：
-    site/index.html            注入 base64 后的成品页面（全站唯一的页面）
+    网站网页/index.html        注入 base64 后的课程检索页面
     site_data.json             仅 --data 时生成，查看完可删
 """
 import base64, io, json, os, re, sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))       # .../课程检索网站/site
+HERE = os.path.dirname(os.path.abspath(__file__))       # .../课程检索网站/网站网页
 ROOT = os.path.dirname(HERE)                             # .../课程检索网站
-SRC = os.path.join(ROOT, "源数据")
+SRC = os.path.join(ROOT, "本地网页", "源数据")
 TRANS = os.path.normpath(os.path.join(ROOT, "..", "转写稿"))
 PAGE = os.path.join(HERE, "index.html")                  # 全站唯一的页面
 OUT_JSON = os.path.join(ROOT, "site_data.json")

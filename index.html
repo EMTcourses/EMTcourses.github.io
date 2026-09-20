@@ -70,6 +70,10 @@
   h2.sech{font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--muted);
           margin:16px 0 8px;font-family:var(--cjk)}
   h2.sech:first-child{margin-top:0}
+  .models-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0 8px;
+    padding:9px 11px;border:1px solid color-mix(in srgb,var(--accent) 38%,var(--line));border-radius:8px;
+    color:var(--accent);background:var(--accent-soft);text-decoration:none;font-weight:650;font-size:14px}
+  .models-entry small{color:var(--muted);font-weight:400}.models-entry:hover{border-color:var(--accent)}
   .topicgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:6px}
   .topic{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:7px;
          padding:5px 8px;cursor:pointer;font:inherit;color:var(--ink);
@@ -398,6 +402,7 @@
     h+='</div>';
     if(MODELS.length){
       // 按钮文字与搜索词可以不同：「JMarti模型」实际搜「JMarti」，覆盖讲师不带"模型"的说法
+      h+='<a class="models-entry" href="models.html"><span>MODELS专题检索</span><small>关键词、函数、变量与严格对应的讲解和 ACP 算例</small></a>';
       h+='<h2 class="sech">按模型</h2><div class="topicgrid models">';
       MODELS.forEach(function(m){
         h+='<button class="topic" type="button" data-alt="'+esc(m[2])+'" title="'
