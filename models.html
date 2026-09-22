@@ -158,7 +158,7 @@
     if(!items.length){acps.innerHTML=head+empty("ACP 源码中未找到。");return}
     var html=head+'<ol class="acplist">';items.forEach(function(a){var label=localHelper?'<a class="acpname" data-reveal href="'+esc(a.href)+'" title="在文件资源管理器中显示 '+esc(a.name)+'">'+esc(a.name)+'</a>':'<span class="acpname">'+esc(a.name)+'</span>';
       html+='<li>'+label;if(a.models&&a.models.length)html+='<div class="tags">'+a.models.slice(0,4).map(function(m){return '<span class="tag">'+esc(m)+'</span>'}).join('')+(a.models.length>4?'<span class="tag">+'+(a.models.length-4)+'</span>':'')+'</div>';html+='</li>'});
-    var note=localHelper?'点击文件名后，将在 Windows 文件资源管理器中显示并选中该 ACP 文件。':(D.local?'':'网页版本禁止访问或跳转到访问者计算机上的本地文件。');
+    var note=localHelper?'点击文件名后，将在 Windows 文件资源管理器中显示并选中该 ACP 文件。':'';
     html+='</ol>'+(note?'<div class="note reveal-feedback">'+note+'</div>':'');acps.innerHTML=html;
   }
   document.addEventListener("click",function(event){var link=event.target.closest("a[data-reveal]");if(!link)return;event.preventDefault();var panel=link.closest(".panel"),status=panel&&panel.querySelector(".reveal-feedback");if(status)status.textContent="正在文件资源管理器中定位…";fetch(link.href,{cache:"no-store"}).then(function(response){if(!response.ok)throw new Error("reveal failed");if(status)status.textContent="已在文件资源管理器中显示并选中该 ACP 文件。"}).catch(function(){if(status)status.textContent="定位失败，请重新从本地启动器打开页面。"})});
