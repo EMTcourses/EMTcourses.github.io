@@ -436,7 +436,7 @@
     h+='</div>';
     if(MODELS.length){
       // 按钮文字与搜索词可以不同：「JMarti模型」实际搜「JMarti」，覆盖讲师不带"模型"的说法
-      h+='<a class="models-entry" href="models.html"><span>MODELS专题检索</span><small>关键词、函数、变量与严格对应的讲解和 ACP 算例</small></a>';
+      h+='<a class="models-entry" href="models.html"><span>MODELS专题检索</span></a>';
       h+='<h2 class="sech">按模型</h2><div class="topicgrid models">';
       MODELS.forEach(function(m){
         h+='<button class="topic" type="button" data-alt="'+esc(m[2])+'" title="'
